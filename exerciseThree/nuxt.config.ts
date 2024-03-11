@@ -3,20 +3,20 @@ export default defineNuxtConfig({
   devtools: { enabled: true },
   css: [
     '~/assets/css/main.css',
-    'primevue/resources/themes/aura-light-green/theme.css'
+    'primevue/resources/themes/aura-light-green/theme.css',
   ],
   postcss: {
     plugins: {
       tailwindcss: {},
       autoprefixer: {},
-    },
+    }
   },
   modules: [
-    'nuxt-primevue',
+    'nuxt-primevue'
   ],
   primevue: {
     components: {
-      include: ['InputSwitch',]
+      include: ['Toast']
     }
   }
 })
