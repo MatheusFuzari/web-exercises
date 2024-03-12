@@ -6,38 +6,50 @@ const products = [
     productName: 'iPhone 2099',
     productPrice: 8549.99,
     productQnt: 48,
+  },
+  {
+    productId: 2,
+    productImg: 'https://mf.b37mrtl.ru/rbthmedia/images/2019.09/original/5d81078c15e9f902e111a482.jpg',
+    productName: 'iPhone 2100',
+    productPrice: 8549.99,
+    productQnt: 48,
   }
-]
+];
 
-const cart: Ref<number[]> = ref([])
-
-const sendCartData = () => {
-  sessionStorage.setItem('CARRINHO', JSON.stringify(cart));
+function checkForDuplicates(array: Array<Object>) {
+  const counts: any = {};
+  array.forEach(function (x: any) {
+    console.log(x)
+    counts[x.id] = (counts[x.id] || 0) + 1;
+  });
+  return counts;
 }
+
+const sendCartData = computed(() => (item: Object) => {
+  const storagedItems = localStorage.getItem('ShopCart');
+  let newCart = ref([]);
+  newCart = storagedItems ? JSON.parse(storagedItems) : [];
+  if (newCart.findIndex((x) => x.id == item.id) != -1) {
+    newCart[newCart.findIndex((x) => x.id == item.id)].actualQnt += 1;
+  } else {
+    toRaw(item).actualQnt = 0
+    newCart.push(item);
+    console.log(newCart);
+  }
+  localStorage.setItem('ShopCart', JSON.stringify(newCart));
+});
 </script>
 
 <template>
   <main>
-    <nav class="flex items-center justify-between flex-wrap bg-slate-100 p-6 border-b">
-      <div class="w-full flex flex-grow items-center">
-        <div class="flex-grow text-md">
-          <a class="inline-block text-black mr-4 hover:text-green-600 cursor-pointer hover:outline-2">Produtos</a>
-        </div>
-        <div class="flex flex-grow items-center flex-shrink-0">
-          <img class="w-12 text-center"
-            src="https://upload.wikimedia.org/wikipedia/commons/thumb/9/9f/LOUD_logo.svg/1200px-LOUD_logo.svg.png">
-        </div>
-        <div>
-          <NuxtLink @click='sendCartData' to='checkout' class='inline-block text-md px-6 py-4 leading-none border-2 rounded text-black border-white
-            hover:border-transparent hover:bg-white hover:text-green-400 mt-0 cursor-pointer'>
-            Check-out</NuxtLink>
-        </div>
-      </div>
-    </nav>
-    <section class='grid grid-cols-5 gap-4 w-screen align-middle place-items-center mt-12'>
-      <ItemsCard v-for="index in 10" :productImg="products[0].productImg" :productQnt="products[0].productQnt"
-        :productName="products[0].productName" :productPrice="products[0].productPrice" :id="products[0].productId"
-        @clicked="(e) => cart.push(e)" />
-    </section>
+    <CustomNav />
+    <div class='mt-28'>
+      <section
+        class='grid grid-cols-1 gap-4 w-screen align-middle place-items-center mt-12 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5'>
+        <ItemsCard v-for="product in products" :productImg="product.productImg" :productQnt="product.productQnt"
+          :productName="product.productName" :productPrice="product.productPrice" :id="product.productId"
+          @clicked="(e) => sendCartData(e)" />
+      </section>
+    </div>
   </main>
 </template>
