@@ -1,14 +1,24 @@
 <script setup lang="ts">
+interface IProducts {
+  id: number;
+  productImg: string;
+  productName: string;
+  productPrice: number;
+  productQnt: number;
+  actualQnt: number;
+}
+
 const storagedItems = typeof window !== 'undefined' ? localStorage.getItem("ShopCart") : '';
-const cartItems = storagedItems ? JSON.parse(storagedItems) : []
+const cartItems: IProducts[] = storagedItems ? JSON.parse(storagedItems) : []
 
-const model: any = ref({})
-const equalItems = reactive({
-  id: 0,
-  quantity: 0,
+const price = ref(0);
+cartItems.forEach((x) => {
+  price.value += (x.productPrice * x.actualQnt);
+})
 
+const totalPrice = computed(() => (e: number) => {
+  console.log(e)
 });
-
 </script>
 
 <template>
@@ -18,11 +28,11 @@ const equalItems = reactive({
       <section v-if='storagedItems'>
         <div class='flex flex-row justify-center'>
           <div class='flex flex-col'>
-            <CheckoutCard v-for='(item, index) in cartItems' :key='index' :shopCart="item" :shopQuantity="1"
-              v-model="model" />
+            <CheckoutCard v-for='(item, index) in cartItems' :key='index' :shopCart="item"
+              @clicked="(e) => totalPrice(e)" />
           </div>
           <div class="h-fit p-2 w-1/5 bg-slate-100 border rounded mx-5">
-            <p class='font-semibold text-lg'>Price: R$ {{ cartItems.productPrice }}</p>
+            <p class='font-semibold text-lg'>Price: R$ {{ price }}</p>
             <button
               class='bg-green-400 text-black text-lg p-1 w-full rounded-md h-fit my-5 hover:bg-green-900 hover:text-white ease-in-out duration-150'>Comprar</button>
           </div>

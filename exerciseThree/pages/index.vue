@@ -1,14 +1,23 @@
 <script setup lang="ts">
-const products = [
+interface IProducts {
+  id: number;
+  productImg: string;
+  productName: string;
+  productPrice: number;
+  productQnt: number;
+  actualQnt?: number;
+}
+
+const products: IProducts[] = [
   {
-    productId: 1,
+    id: 1,
     productImg: 'https://microimport.com.br/wp-content/uploads/iphone-12-de-128-gb.webp',
     productName: 'iPhone 2099',
     productPrice: 8549.99,
     productQnt: 48,
   },
   {
-    productId: 2,
+    id: 2,
     productImg: 'https://mf.b37mrtl.ru/rbthmedia/images/2019.09/original/5d81078c15e9f902e111a482.jpg',
     productName: 'iPhone 2100',
     productPrice: 8549.99,
@@ -16,23 +25,17 @@ const products = [
   }
 ];
 
-function checkForDuplicates(array: Array<Object>) {
-  const counts: any = {};
-  array.forEach(function (x: any) {
-    console.log(x)
-    counts[x.id] = (counts[x.id] || 0) + 1;
-  });
-  return counts;
-}
 
-const sendCartData = computed(() => (item: Object) => {
+const sendCartData = computed(() => (item: IProducts) => {
   const storagedItems = localStorage.getItem('ShopCart');
-  let newCart = ref([]);
+  let newCart: IProducts[] = [];
   newCart = storagedItems ? JSON.parse(storagedItems) : [];
+  console.log(item.id)
   if (newCart.findIndex((x) => x.id == item.id) != -1) {
-    newCart[newCart.findIndex((x) => x.id == item.id)].actualQnt += 1;
+    const addQnt = (array: any) => { return array += 1 };
+    newCart[newCart.findIndex((x) => x.id == item.id)].actualQnt = addQnt(newCart[newCart.findIndex((x) => x.id == item.id)].actualQnt);
   } else {
-    toRaw(item).actualQnt = 0
+    toRaw(item).actualQnt = 1
     newCart.push(item);
     console.log(newCart);
   }
@@ -47,7 +50,7 @@ const sendCartData = computed(() => (item: Object) => {
       <section
         class='grid grid-cols-1 gap-4 w-screen align-middle place-items-center mt-12 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5'>
         <ItemsCard v-for="product in products" :productImg="product.productImg" :productQnt="product.productQnt"
-          :productName="product.productName" :productPrice="product.productPrice" :id="product.productId"
+          :productName="product.productName" :productPrice="product.productPrice" :id="product.id"
           @clicked="(e) => sendCartData(e)" />
       </section>
     </div>

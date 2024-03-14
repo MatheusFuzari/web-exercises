@@ -1,10 +1,19 @@
 <script setup lang="ts">
+interface IProducts {
+  id: number;
+  productImg: string;
+  productName: string;
+  productPrice: number;
+  productQnt: number;
+  actualQnt: number;
+}
+
 const props = defineProps({
   shopCart: { type: Object, required: true },
-  shopQuantity: { type: Number, required: true },
 });
 
-const selectedQuantity = defineModel();
+const selectedQuantity = defineEmits(['clicked']);
+
 </script>
 <template>
   <div class='p-8 bg-gray-100 flex flex-row h-fit'>
@@ -14,8 +23,9 @@ const selectedQuantity = defineModel();
     <div class="flex flex-col justify-between h-100% w-4/6">
       <p class='text-lg font-semibold'>{{ props.shopCart.productName }}</p>
       <div class='flex flex-row gap-5'>
-        <select v-model='selectedQuantity'>
-          <option v-for='quantity of props.shopCart.productQnt' :value='{ id: props.shopCart.id, qnt: quantity }'>{{
+        <select :name="props.shopCart.id" @input="$emit('clicked', $event.target?.value)">
+          <option v-for='quantity of props.shopCart.productQnt' :value='quantity'
+            v-bind:selected="props.shopCart.actualQnt == quantity">{{
         quantity }}
           </option>
         </select>
