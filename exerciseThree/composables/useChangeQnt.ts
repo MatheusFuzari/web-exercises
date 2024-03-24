@@ -9,7 +9,6 @@ export default function () {
     };
 
     const changeQnt = (newQnt: number, id: number) => {
-        debugger
         cart.value.forEach((x) => {
             if (x.id == id) {
                 toRaw(x).actualQnt = newQnt;

@@ -16,7 +16,8 @@ export default defineNuxtConfig({
   ],
   primevue: {
     components: {
-      include: ['Toast']
-    }
+      include: ['Toast', 'ToastService']
+    },
+
   }
 })
